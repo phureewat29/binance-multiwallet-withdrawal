@@ -5,16 +5,15 @@ import crypto from 'node:crypto';
 import _ from "lodash"
 
 const txStatuses = { 0: "Email Sent", 1: "Cancelled", 2: "Awaiting Approval", 3: "Rejected", 4: "Processing", 5: "Failure", 6: "Completed" };
-const autoConvertableStables = ["USDC", "USDP", "TUSD"]
 const timeout = ms => new Promise(res => setTimeout(res, ms));
 const sign = query_string => crypto.createHmac('sha256', config.secret).update(query_string).digest('hex');
 
-
 function parseFile(file) {
-    let data = fs.readFileSync(file, "utf8");
-    let array = data.split('\r\n');
-    let wallets = [];
+    const data = fs.readFileSync(file, "utf8");
+    const array = data.split('\r\n');
+    const wallets = [];
 
+    // sanitize wallet address
     array.forEach(wallet => {
         if (wallet.length > 3) {
             wallets.push(wallet)
@@ -23,17 +22,18 @@ function parseFile(file) {
     return wallets
 }
 
-
-function validateWallets(array, regexp) {
+function isAllWalletsValid(wallets, networkRegex) {
     let invalidWallets = [];
 
-    array.forEach(wallet => {
-        !wallet.match(regexp) && invalidWallets.push(wallet)
+    wallets.forEach(wallet => {
+        !wallet.match(networkRegex) && invalidWallets.push(wallet)
     })
 
     if (invalidWallets.length > 0) {
         console.log(`invalid wallets: ${invalidWallets.join("\n")}`);
-    } else return true
+        return false
+    }
+    return true
 }
 
 
@@ -86,17 +86,15 @@ async function withdraw(coin, address, amount, network) {
 
 
 (async () => {
-    let coinData = await getCoinInformation(config.token.toUpperCase());
-    let networks = coinData.networkList.map(item => item.network);
-    let balance = autoConvertableStables.includes(config.token.toUpperCase()) ? (await getCoinInformation("BUSD")).free : coinData.free;
-    console.log(`balance: ${balance} ${coinData.coin}`);
+    const coinData = await getCoinInformation(config.token);
+    const supportedNetworks = coinData.networkList.map(item => item.network);
+    console.log(`balance: ${coinData.free} ${coinData.coin}`);
 
-    if (networks.includes(config.network.toUpperCase())) {
-        let networkData = coinData.networkList.find(item => item.network == config.network.toUpperCase());
-        let wallets = parseFile("wallets.txt");
-        let validWallets = validateWallets(wallets, networkData.addressRegex);
-        let amount = typeof (config.amount) == 'string' ? config.amount.replace('.', ',') : config.amount;
-        autoConvertableStables.includes(config.token.toUpperCase()) && console.log(networkData?.specialTips);
+    if (supportedNetworks.includes(config.network)) {
+        const networkData = coinData.networkList.find(item => item.network == config.network);
+        const wallets = parseFile("wallets.txt");
+        const isAllWalletsValid = isAllWalletsValid(wallets, networkData.addressRegex);
+        const amount = typeof (config.amount) == 'string' ? config.amount.replace('.', ',') : config.amount;
 
         if (validWallets) {
             if (balance >= wallets.length * amount) {
@@ -105,8 +103,10 @@ async function withdraw(coin, address, amount, network) {
                     let finalAmount = config.randomizeAmount ? (amount * (_.random(1 - (config.spread / 100), 1))).toFixed(decimals) : amount;
 
                     if (+finalAmount >= +networkData.withdrawMin) {
-                        await withdraw(config.token.toUpperCase(), wallets[i], finalAmount, config.network.toUpperCase())
-                    } else console.log(`minimal amount is: ${networkData.withdrawMin} ${networkData.coin}, current amount is: ${finalAmount} ${networkData.coin}`);
+                        await withdraw(config.token, wallets[i], finalAmount, config.network)
+                    } else {
+                        console.log(`minimal amount is: ${networkData.withdrawMin} ${networkData.coin}, current amount is: ${finalAmount} ${networkData.coin}`);
+                    }
                 }
             } else console.log('insufficient funds')
         } else console.log('please, remove invalid wallets')
