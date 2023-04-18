@@ -1,10 +1,10 @@
 # Binance Multiwallet Withdrawal
-This script allows you to withdraw coins from the binance balance to multiple wallets. The bot supports all binance coins and all networks. Will be useful for participating in retrodrops and other types of abuse. This bot able to send random amounts to avoid linking wallets, check for invalid wallets, send with random delay.
+A Nodejs script to withdraw asset from the Binance account into multiple wallets. This script can be useful for participating in retro-airdrops.
 
-## Before Start
-This script has many checks for invalid input and other errors. However, use at your own risk. The author is not responsible for any loss of funds.
+## Disclaimer
+This script has many checks for invalid input and other errors. Use at your own risk. The author is not responsible for any loss of funds.
 
-## Get Binance API key
+## Setup
 
 1) Binance -> Settings -> API Management -> Create API.
 2) Copy API key and Secret key to `config.js` file.
