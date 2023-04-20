@@ -5,7 +5,7 @@ dotenv.config()
 export const config = {
   apiKey: process.env.BINANCE_APIKEY,
   secretKey: process.env.BINANCE_SECRETKEY,
-  targetWallets: ['0x39e3668D11E5d6CCe1196d182689ee1729bb4dFf'],
+  targetWallets: [],
   token: 'ETH',
   network: 'ETH',
   amount: 0.01,
