@@ -65,9 +65,9 @@ const withdraw = async (coin, address, amount, network) => {
   const decimals = withdrawIntegerMultiple.length > 1 ? withdrawIntegerMultiple.split('.')[1].length : 0
   console.log(`account balance: ${coinData.free} ${coinData.coin}`)
 
-  for (let i = 0; i < config.addresses.length; i++) {
+  for (let i = 0; i < config.targetWallets.length; i++) {
     const amount = config.spread.enable ? calculateSpreadAmount(decimals) : config.amount
-    console.log(`withdraw: ${amount} ${config.token}, on ${config.network}, to ${config.addresses[i]}`)
-    await withdraw(config.token, config.addresses[i], amount, config.network)
+    console.log(`withdraw: ${amount} ${config.token}, on ${config.network}, to ${config.targetWallets[i]}`)
+    await withdraw(config.token, config.targetWallets[i], amount, config.network)
   }
 })()
