@@ -15,10 +15,7 @@ export const config = {
   spreadTargetWallets: [],
 
   // For exact mode: object mapping wallet addresses to exact amounts
-  exactTargetWallets: {
-    "0x0000000000000000000000000000000000000000": 0.1,
-    "0x0000000000000000000000000000000000000001": 0.1,
-  },
+  exactTargetWallets: {},
 
   token: "SOL",
   network: "SOL",

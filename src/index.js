@@ -50,7 +50,7 @@ const getTransactionInfo = async (coin, txid) => {
   console.log(
     `tx sent ${tx.amount} ${tx.coin}, fee: ${tx.transactionFee} ${
       tx.coin
-    }, status: ${txStatuses[tx.status]}`
+    }, status: ${txStatuses[tx.status]}, txid: ${tx.txId}`
   );
 
   return res.data;
@@ -66,7 +66,9 @@ const withdraw = async (coin, address, amount, network) => {
 
   await delay(_.random(config.txDelay.min, config.txDelay.max) * 1000);
   await getTransactionInfo(coin, res.data.id);
-
+  const delaySeconds = _.random(30, 120);
+  console.log(`delay ${delaySeconds} seconds`);
+  await delay(delaySeconds * 1000);
   return res;
 };
 
