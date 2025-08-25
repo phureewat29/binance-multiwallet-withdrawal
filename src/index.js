@@ -65,7 +65,7 @@ const withdraw = async (coin, address, amount, network) => {
     .catch((err) => console.error(err.response.data.msg));
 
   const delaySeconds = _.random(config.txDelay.min, config.txDelay.max);
-  console.log(`delay ${deslaySeconds} seconds`);
+  console.log(`delay ${delaySeconds} seconds`);
   await delay(delaySeconds * 1000);
   await getTransactionInfo(coin, res.data.id);
   return res;
