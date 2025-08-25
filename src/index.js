@@ -64,11 +64,10 @@ const withdraw = async (coin, address, amount, network) => {
     .post(`/withdraw/apply?${query}&signature=${signature}`)
     .catch((err) => console.error(err.response.data.msg));
 
-  await delay(_.random(config.txDelay.min, config.txDelay.max) * 1000);
-  await getTransactionInfo(coin, res.data.id);
-  const delaySeconds = _.random(30, 120);
-  console.log(`delay ${delaySeconds} seconds`);
+  const delaySeconds = _.random(config.txDelay.min, config.txDelay.max);
+  console.log(`delay ${deslaySeconds} seconds`);
   await delay(delaySeconds * 1000);
+  await getTransactionInfo(coin, res.data.id);
   return res;
 };
 
